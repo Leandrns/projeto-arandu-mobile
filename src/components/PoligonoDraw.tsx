@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import {
   GestureResponderEvent,
   LayoutChangeEvent,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -26,9 +27,34 @@ export function PoligonoDraw({ pontos, onChange }: Props) {
   }
 
   function addPonto(e: GestureResponderEvent) {
-    const { locationX, locationY } = e.nativeEvent;
-    const x = Math.min(1, Math.max(0, locationX / size.w));
-    const y = Math.min(1, Math.max(0, locationY / size.h));
+    const ne = e.nativeEvent as typeof e.nativeEvent & {
+      clientX?: number;
+      pageX?: number;
+      clientY?: number;
+      pageY?: number;
+    };
+    let lx: number = ne.locationX;
+    let ly: number = ne.locationY;
+
+    // No React Native Web, locationX/Y do Pressable às vezes vem NaN/undefined.
+    // Why: o responder system não mapeia offsetX/Y de forma consistente — caímos
+    // no clientX/Y relativos ao currentTarget (o próprio Pressable).
+    if (Platform.OS === 'web' && (!Number.isFinite(lx) || !Number.isFinite(ly))) {
+      const currentTarget = (e as unknown as { currentTarget?: { getBoundingClientRect?: () => DOMRect } })
+        .currentTarget;
+      const rect = currentTarget?.getBoundingClientRect?.();
+      const cx = ne.clientX ?? ne.pageX;
+      const cy = ne.clientY ?? ne.pageY;
+      if (rect && Number.isFinite(cx) && Number.isFinite(cy)) {
+        lx = (cx as number) - rect.left;
+        ly = (cy as number) - rect.top;
+      }
+    }
+
+    if (!Number.isFinite(lx) || !Number.isFinite(ly) || size.w <= 0 || size.h <= 0) return;
+
+    const x = Math.min(1, Math.max(0, lx / size.w));
+    const y = Math.min(1, Math.max(0, ly / size.h));
     onChange([...pontos, { x: Number(x.toFixed(3)), y: Number(y.toFixed(3)) }]);
   }
 
