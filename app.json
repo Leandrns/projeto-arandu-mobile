@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Arandu",
+    "slug": "arandu-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#FFFFFF",
+    "splash": {
+      "image": "./assets/arandu-logo-white.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#60C77B"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#60C77B",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}
