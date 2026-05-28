@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import Svg, {
   ClipPath,
   Defs,
@@ -69,15 +69,18 @@ export function NdviMap({ poligono, ndviBase, seed, height = 220 }: Props) {
   return (
     <View>
       <View style={[styles.frame, { height }]}>
-        <Svg width="100%" height="100%" viewBox="0 0 100 100">
+        <Image
+          source={require('../../assets/map-bg.png')}
+          resizeMode="cover"
+          style={styles.mapImage}
+        />
+        <View style={styles.mapOverlay} pointerEvents="none" />
+        <Svg width="100%" height="100%" viewBox="0 0 100 100" style={styles.svg}>
           <Defs>
             <ClipPath id="farm">
               <Polygon points={pointsStr} />
             </ClipPath>
           </Defs>
-
-          {/* terreno fora da propriedade */}
-          <Rect x={0} y={0} width={100} height={100} fill="#EEF3EA" />
 
           {/* grade NDVI recortada pelo polígono */}
           <Rect x={0} y={0} width={100} height={100} fill="#DfeAdC" clipPath="url(#farm)" />
@@ -126,6 +129,17 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     backgroundColor: '#EEF3EA',
   },
+  mapImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+    opacity: 0.95,
+  },
+  mapOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
+  svg: { ...StyleSheet.absoluteFillObject },
   tag: {
     position: 'absolute',
     bottom: spacing.sm,

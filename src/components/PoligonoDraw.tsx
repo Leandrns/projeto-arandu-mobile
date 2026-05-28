@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
   GestureResponderEvent,
+  Image,
   LayoutChangeEvent,
   Platform,
   Pressable,
@@ -66,6 +67,12 @@ export function PoligonoDraw({ pontos, onChange }: Props) {
   return (
     <View>
       <Pressable style={styles.canvas} onPress={addPonto} onLayout={onLayout}>
+        <Image
+          source={require('../../assets/map-bg.png')}
+          resizeMode="cover"
+          style={[StyleSheet.absoluteFillObject, styles.mapImage]}
+        />
+        <View style={[StyleSheet.absoluteFillObject, styles.mapOverlay]} pointerEvents="none" />
         <View style={styles.fill} pointerEvents="none">
           <Svg width="100%" height="100%" viewBox="0 0 100 100">
             {pontos.length >= 3 && (
@@ -101,14 +108,16 @@ export function PoligonoDraw({ pontos, onChange }: Props) {
 
         {pontos.length === 0 && (
           <View pointerEvents="none" style={styles.hint}>
-            <MaterialCommunityIcons
-              name="gesture-tap"
-              size={32}
-              color={colors.primaryDark}
-            />
-            <Text style={styles.hintText}>
-              Toque no mapa para marcar os cantos da sua plantação
-            </Text>
+            <View style={styles.hintBubble}>
+              <MaterialCommunityIcons
+                name="gesture-tap"
+                size={28}
+                color={colors.primaryDark}
+              />
+              <Text style={styles.hintText}>
+                Toque no mapa para marcar os cantos da sua plantação
+              </Text>
+            </View>
           </View>
         )}
       </Pressable>
@@ -148,6 +157,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   fill: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
+  mapImage: { opacity: 0.95, width: '100%', height: '100%' },
+  mapOverlay: {
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
   hint: {
     position: 'absolute',
     top: 0,
@@ -157,12 +170,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: spacing.lg,
-    gap: spacing.sm,
+  },
+  hintBubble: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.md,
+    backgroundColor: 'rgba(255,255,255,0.85)',
   },
   hintText: {
     fontFamily: fonts.regular,
     fontSize: fontSizes.caption,
-    color: colors.textMuted,
+    color: colors.text,
     textAlign: 'center',
   },
   actions: {
